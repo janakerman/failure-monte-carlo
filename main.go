@@ -17,17 +17,15 @@ const (
 	timeStart = 0
 	timeEnd   = 60 * 24 * 30
 
-	// System A
-	numIncidentsA = 2
-
-	// System B
+	// Systems
 	incidentDuration = 60
-	availabilityB    = 0.995
+	numIncidentsA    = 10
+	numIncidentsB    = 1
 )
 
 type params struct {
-	bAvailability    float64
-	aNumIncidents    int
+	numIncidentsB    int
+	numIncidentsA    int
 	incidentDuration float64
 }
 
@@ -39,8 +37,8 @@ func main() {
 	rand.Seed(time.Now().UTC().UnixNano())
 	params := params{
 		incidentDuration: incidentDuration,
-		bAvailability:    availabilityB,
-		aNumIncidents:    numIncidentsA,
+		numIncidentsB:    numIncidentsB,
+		numIncidentsA:    numIncidentsA,
 	}
 
 	log.Infof("Parameters: %+v", params)
@@ -48,6 +46,7 @@ func main() {
 	successes := 0
 
 	for i := 0; i < trials; i++ {
+
 		success := simulate(params)
 		if success {
 			successes++
@@ -59,13 +58,8 @@ func main() {
 }
 
 func simulate(p params) bool {
-	bNum := bNumIncidents(p.bAvailability, p.incidentDuration)
-
-	log.Debugf("Num A incidents: %d", p.aNumIncidents)
-	log.Debugf("Num B incidents: %d", bNum)
-
-	aIncidents := nonOverlappingIncidents(numIncidentsA)
-	bIncidents := nonOverlappingIncidents(bNum)
+	aIncidents := nonOverlappingIncidents(p.numIncidentsA)
+	bIncidents := nonOverlappingIncidents(p.numIncidentsB)
 
 	log.Debugf("A incidents: %v", aIncidents)
 	log.Debugf("B incidents: %v", bIncidents)
